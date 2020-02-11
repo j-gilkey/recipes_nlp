@@ -21,6 +21,34 @@ def get_cuisine_type_links():
 
 
 
+# def get_alphabet_links():
+#     cuisine_links = get_cuisine_type_links()
+#
+#     second_link = cuisine_links[1]
+#
+#
+#     link_list = []
+#
+#     for link in cuisine_links:
+#         page = requests.get(link)
+#         soup = BeautifulSoup(page.content, 'html.parser')
+#
+#         test = soup.find_all(class_="tab-bar__tab gel-pica")
+#
+#         if test:
+#
+#             list = soup.find_all(class_="az-keyboard__link gel-pica-bold")
+#             link_list.append(link)
+#
+#             for item in list:
+#                 letter_link  = 'https://www.bbc.co.uk' + item['href']
+#                 link_list.append(letter_link)
+#
+#     #print(link_list)
+#
+#     return link_list
+
+
 def get_alphabet_links():
     cuisine_links = get_cuisine_type_links()
 
@@ -93,9 +121,12 @@ def get_ingredients():
     return recipe_list
 
 
-get_ingredients()
+#get_ingredients()
 
 
+def bbc_scrape_wrapper():
+
+    cusine_links = get_cuisine_type_links()
 
 
 #get_recipe_page_links()
