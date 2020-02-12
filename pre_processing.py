@@ -3,6 +3,7 @@ from nltk.tokenize import RegexpTokenizer
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 from nltk.probability import FreqDist
+from nltk import everygrams
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -122,14 +123,14 @@ def freq_by_cuisine(df):
 
     for cuisine in df_list:
         #print(item.head)
-        data = cuisine['recipe'].apply(lambda row: row.split(' '))
+        data = cuisine['recipe'].apply(lambda row: list(everygrams(row.split(' '),min_len = 4, max_len = 4)))
         flat_data = [item for sublist in data for item in sublist]
         data_freq = FreqDist(flat_data)
 
         print(data_freq.most_common(20))
 
 
-freq_by_cuisine(df)
+#freq_by_cuisine(df)
 
 
 # tfidf_X_train_lem, tfidf_X_test_lem = process_data(df)
