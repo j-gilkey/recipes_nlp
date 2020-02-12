@@ -69,12 +69,12 @@ def create_tf_idf(df):
 
 #create_tf_idf(df)
 
-def process_data(df):
+def process_data(df, max_gram):
     df['Ingredients'] = df.apply(lambda row: ' '.join(clean_strings(row['Ingredients'])), axis=1)
 
     X_train_lem, X_test_lem, y_train_lem, y_test_lem = train_test_split(df['Ingredients'], df['Cuisine'], test_size=0.20, random_state=1)
 
-    tfidf=TfidfVectorizer()
+    tfidf=TfidfVectorizer(ngram_range=(1, max_gram))
 
     tfidf_X_train_lem = tfidf.fit_transform(X_train_lem)
     tfidf_X_test_lem = tfidf.transform(X_test_lem)
