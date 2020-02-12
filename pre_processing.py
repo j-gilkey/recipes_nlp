@@ -12,8 +12,15 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import f1_score
 
-df = pd.read_csv('concat_uncleaned_recipes.csv')
-df = df.dropna()
+def create_base_df():
+    df = pd.read_csv('concat_uncleaned_recipes.csv').dropna()
+    df = filter_cuisines(df, [2,3,5,6,7,8,9,13])
+
+    cuisine_map = {2: 'Mexican', 3 : 'Italian', 5 : 'French', 6 : 'American', 7 : 'British', 8 : 'Chinese', 9 : 'Indian', 13 : 'Japanese'}
+    #cuisine_map = {'2': 'Mexican', '3' : 'Italian', '5' : 'French', '6' : 'American', '7' : 'British', '8' : 'Chinese', '9' : 'Indian', '13' : 'Japanese', }
+    df['name'] = df['Cuisine'].replace(cuisine_map)
+
+    return df
 
 def clean_strings(string):
     #tokenize
@@ -51,9 +58,11 @@ def create_basic_doc_term_matrix(df):
 def create_tf_idf(df):
 
     df['Ingredients'] = df.apply(lambda row: ' '.join(clean_strings(row['Ingredients'])), axis=1)
+    #clean recipes and then join them back into one string
 
     tf=TfidfVectorizer()
     X = tf.fit_transform(df['Ingredients'])
+    #init and fit tfidf
 
     idf_df = pd.DataFrame(X.toarray().transpose(), index = tf.get_feature_names())
     print(idf_df.transpose())
@@ -72,73 +81,8 @@ def process_data(df):
 
     return tfidf_X_train_lem, tfidf_X_test_lem, y_train_lem, y_test_lem
 
-def fit_random_forest(df):
+def filter_cuisines(df, cuisines_to_filter):
 
-    tfidf_X_train_lem, tfidf_X_test_lem, y_train_lem, y_test_lem = process_data(df)
+    df = df[df['Cuisine'].isin(cuisines_to_filter)]
 
-    rf_classifier_lem = RandomForestClassifier(n_estimators=100, random_state=0)
-
-    rf_classifier_lem.fit(tfidf_X_train_lem, y_train_lem)
-
-    rf_test_preds_lem = rf_classifier_lem.predict(tfidf_X_test_lem)
-
-    rf_acc_score_lem = accuracy_score(y_test_lem, rf_test_preds_lem)
-    rf_f1_score_lem = f1_score(y_test_lem, rf_test_preds_lem, average='macro')
-
-    print(rf_acc_score_lem)
-    print(rf_f1_score_lem)
-
-#fit_random_forest(df)
-
-def freq_by_cuisine(df):
-    df['Ingredients'] = df.apply(lambda row: ' '.join(clean_strings(row['Ingredients'])), axis=1)
-    df_freq_mex = df[df['Cuisine']==2]
-    df_freq_ital = df[df['Cuisine']==3]
-    df_freq_afri = df[df['Cuisine']==4]
-    df_freq_fren = df[df['Cuisine']==5]
-    df_freq_amer = df[df['Cuisine']==6]
-    df_freq_brit = df[df['Cuisine']==7]
-    df_freq_ch = df[df['Cuisine']==8]
-    df_freq_ind = df[df['Cuisine']==9]
-    df_freq_irish = df[df['Cuisine']==10]
-    df_freq_nord = df[df['Cuisine']==11]
-    df_freq_pak = df[df['Cuisine']==12]
-    df_freq_japan = df[df['Cuisine']==13]
-
-    df_list = [df_freq_mex, df_freq_ital, df_freq_afri, df_freq_fren, df_freq_amer, df_freq_brit, df_freq_ch, df_freq_ind, df_freq_irish, df_freq_nord, df_freq_pak, df_freq_japan]
-
-    # for item in df_list:
-    #     #print(item.head)
-    #     data = item['Ingredients']
-    #     total_vocab_sat = set()
-    #     for recipe in data:
-    #         #print(recipe)
-    #         word_list = recipe.split(' ')
-    #         for word in word_list:
-    #             #print(word)
-    #             total_vocab_sat.update({word})
-    #
-    #     print(len(total_vocab_sat))
-
-
-    for cuisine in df_list:
-        #print(item.head)
-        data = cuisine['Ingredients'].apply(lambda row: list(everygrams(row.split(' '),min_len = 4, max_len = 4)))
-        flat_data = [item for sublist in data for item in sublist]
-        data_freq = FreqDist(flat_data)
-
-        print(data_freq.most_common(20))
-
-
-freq_by_cuisine(df)
-
-
-# tfidf_X_train_lem, tfidf_X_test_lem = process_data(df)
-#
-# non_zero_cols = tfidf_X_train_lem.nnz / float(tfidf_X_train_lem.shape[0])
-#
-# percent_sparse = 1 - (non_zero_cols / float(tfidf_X_train_lem.shape[1]))
-# print(percent_sparse)
-# print(non_zero_cols)
-#
-# print(tfidf_X_train_lem)
+    return df
