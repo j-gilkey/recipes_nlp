@@ -12,7 +12,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import f1_score
 
-df = pd.read_csv('overall_bbc.csv')
+df = pd.read_csv('concat_uncleaned_recipes.csv')
 df = df.dropna()
 
 def clean_strings(string):
@@ -39,10 +39,10 @@ def clean_strings(string):
 
 def create_basic_doc_term_matrix(df):
 
-    df['recipe'] = df.apply(lambda row: ' '.join(clean_strings(row['recipe'])), axis=1)
+    df['Ingredients'] = df.apply(lambda row: ' '.join(clean_strings(row['Ingredients'])), axis=1)
 
     vec = CountVectorizer(stop_words=None)
-    X = vec.fit_transform(df['recipe'])
+    X = vec.fit_transform(df['Ingredients'])
 
     df_features = pd.DataFrame(X.toarray(), columns = vec.get_feature_names())
 
@@ -50,10 +50,10 @@ def create_basic_doc_term_matrix(df):
 
 def create_tf_idf(df):
 
-    df['recipe'] = df.apply(lambda row: ' '.join(clean_strings(row['recipe'])), axis=1)
+    df['Ingredients'] = df.apply(lambda row: ' '.join(clean_strings(row['Ingredients'])), axis=1)
 
     tf=TfidfVectorizer()
-    X = tf.fit_transform(df['recipe'])
+    X = tf.fit_transform(df['Ingredients'])
 
     idf_df = pd.DataFrame(X.toarray().transpose(), index = tf.get_feature_names())
     print(idf_df.transpose())
@@ -61,9 +61,9 @@ def create_tf_idf(df):
 #create_tf_idf(df)
 
 def process_data(df):
-    df['recipe'] = df.apply(lambda row: ' '.join(clean_strings(row['recipe'])), axis=1)
+    df['Ingredients'] = df.apply(lambda row: ' '.join(clean_strings(row['Ingredients'])), axis=1)
 
-    X_train_lem, X_test_lem, y_train_lem, y_test_lem = train_test_split(df['recipe'], df['type'], test_size=0.20, random_state=1)
+    X_train_lem, X_test_lem, y_train_lem, y_test_lem = train_test_split(df['Ingredients'], df['Cuisine'], test_size=0.20, random_state=1)
 
     tfidf=TfidfVectorizer()
 
@@ -91,25 +91,25 @@ def fit_random_forest(df):
 #fit_random_forest(df)
 
 def freq_by_cuisine(df):
-    df['recipe'] = df.apply(lambda row: ' '.join(clean_strings(row['recipe'])), axis=1)
-    df_freq_mex = df[df['type']==2]
-    df_freq_ital = df[df['type']==3]
-    df_freq_afri = df[df['type']==4]
-    df_freq_fren = df[df['type']==5]
-    df_freq_amer = df[df['type']==6]
-    df_freq_brit = df[df['type']==7]
-    df_freq_ch = df[df['type']==8]
-    df_freq_ind = df[df['type']==9]
-    df_freq_irish = df[df['type']==10]
-    df_freq_nord = df[df['type']==11]
-    df_freq_pak = df[df['type']==12]
-    df_freq_japan = df[df['type']==13]
+    df['Ingredients'] = df.apply(lambda row: ' '.join(clean_strings(row['Ingredients'])), axis=1)
+    df_freq_mex = df[df['Cuisine']==2]
+    df_freq_ital = df[df['Cuisine']==3]
+    df_freq_afri = df[df['Cuisine']==4]
+    df_freq_fren = df[df['Cuisine']==5]
+    df_freq_amer = df[df['Cuisine']==6]
+    df_freq_brit = df[df['Cuisine']==7]
+    df_freq_ch = df[df['Cuisine']==8]
+    df_freq_ind = df[df['Cuisine']==9]
+    df_freq_irish = df[df['Cuisine']==10]
+    df_freq_nord = df[df['Cuisine']==11]
+    df_freq_pak = df[df['Cuisine']==12]
+    df_freq_japan = df[df['Cuisine']==13]
 
     df_list = [df_freq_mex, df_freq_ital, df_freq_afri, df_freq_fren, df_freq_amer, df_freq_brit, df_freq_ch, df_freq_ind, df_freq_irish, df_freq_nord, df_freq_pak, df_freq_japan]
 
     # for item in df_list:
     #     #print(item.head)
-    #     data = item['recipe']
+    #     data = item['Ingredients']
     #     total_vocab_sat = set()
     #     for recipe in data:
     #         #print(recipe)
@@ -123,14 +123,14 @@ def freq_by_cuisine(df):
 
     for cuisine in df_list:
         #print(item.head)
-        data = cuisine['recipe'].apply(lambda row: list(everygrams(row.split(' '),min_len = 4, max_len = 4)))
+        data = cuisine['Ingredients'].apply(lambda row: list(everygrams(row.split(' '),min_len = 4, max_len = 4)))
         flat_data = [item for sublist in data for item in sublist]
         data_freq = FreqDist(flat_data)
 
         print(data_freq.most_common(20))
 
 
-#freq_by_cuisine(df)
+freq_by_cuisine(df)
 
 
 # tfidf_X_train_lem, tfidf_X_test_lem = process_data(df)
