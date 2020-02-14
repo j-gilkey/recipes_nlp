@@ -4,7 +4,9 @@ import pandas as pd
 
 
 def get_cuisine_type_links():
+    #get a page link for each cuisine classification on bbc.com
     page = requests.get("https://www.bbc.co.uk/food/cuisines")
+    #automaticall goes to the BBC cuisine homepage
     soup = BeautifulSoup(page.content, 'html.parser')
 
     list = soup.find_all(class_="promo promo__cuisine")
@@ -18,12 +20,10 @@ def get_cuisine_type_links():
 
     return link_list
 
-#print(get_cuisine_type_links())
-
-# for item in get_cuisine_type_links():
-#     print(item)
 
 def get_alphabet_links(cuisine_link):
+    #gets a link for each cooresponding alphabetized page from a given cuisines link
+
     link_list = []
 
     page = requests.get(cuisine_link)
@@ -43,6 +43,7 @@ def get_alphabet_links(cuisine_link):
     return link_list
 
 def get_recipe_page_links(alphabet_link):
+    #get all recipe links on a given alpabetized page
 
 
     link_list = []
@@ -53,7 +54,6 @@ def get_recipe_page_links(alphabet_link):
     list = soup.find_all(class_="gel-layout__item gel-1/2 gel-1/3@m gel-1/4@xl")
 
     for item in list:
-        #print(item.a['href'])
         recipe_link  = 'https://www.bbc.co.uk' + item.a['href']
         link_list.append(recipe_link)
 
@@ -61,34 +61,23 @@ def get_recipe_page_links(alphabet_link):
         #must move the indent out one for the final run!!
 
 def get_ingredients(recipe_link):
-
-    #recipe_list = []
+    #get the actual recipe ingredients for a given recipe
 
     page = requests.get(recipe_link)
     soup = BeautifulSoup(page.content, 'html.parser')
-
     list = soup.find_all(class_="recipe-ingredients__list-item")
 
     ingredients = ''
 
     for item in list:
         ingredient = item.get_text()
-        #print(ingredient)
-
         ingredients = ingredients + ingredient + ' '
-
-    #recipe_list.append(ingredients)
 
     return ingredients
 
-
-#get_ingredients()
-
-
 def bbc_scrape_wrapper():
-
-    #cuisine_links = get_cuisine_type_links()
-
+    #wrapper function that calls the above functions and iterates through them
+    #due to the slow speed of the scrape it is recommended to run cuisine pages one at a time
     cuisine_links = [['https://www.bbc.co.uk/food/cuisines/pakistani/a-z', 'pakistani']]
 
     '''cuisine_links = [['https://www.bbc.co.uk/food/cuisines/african/a-z', 'african'],
@@ -124,16 +113,4 @@ def bbc_scrape_wrapper():
                 final_list.append((ingredients, cuisine_type))
                 #print(final_list)
 
-
-
-
-
-
     return final_list
-
-
-#amer_scrape_list = bbc_scrape_wrapper()
-
-#df = pd.DataFrame(amer_scrape_list, columns  = ['recipe', 'type' ])
-
-#df.to_csv('pakistani.csv', index=False)

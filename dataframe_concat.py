@@ -2,6 +2,7 @@
 import pandas as pd
 
 def create_overall_dataframe():
+    #takes in each individual cuisine
 
     amer = pd.read_csv('cuisine_csv/amer.csv' )
     british = pd.read_csv('cuisine_csv/british.csv' )
