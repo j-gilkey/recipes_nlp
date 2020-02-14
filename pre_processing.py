@@ -13,12 +13,13 @@ from sklearn.metrics import accuracy_score
 from sklearn.metrics import f1_score
 
 def create_base_df():
+    #create and filter the base level dataframe
     df = pd.read_csv('concat_uncleaned_recipes.csv').dropna()
     df = filter_cuisines(df, [2,3,5,6,7,8,9,13])
 
     cuisine_map = {2: 'Mexican', 3 : 'Italian', 5 : 'French', 6 : 'American', 7 : 'British', 8 : 'Chinese', 9 : 'Indian', 13 : 'Japanese'}
-    #cuisine_map = {'2': 'Mexican', '3' : 'Italian', '5' : 'French', '6' : 'American', '7' : 'British', '8' : 'Chinese', '9' : 'Indian', '13' : 'Japanese', }
     df['name'] = df['Cuisine'].replace(cuisine_map)
+    #create natural language label in addition to cuisine code
 
     return df
 
@@ -45,13 +46,17 @@ def clean_strings(string):
     return cleaned_string
 
 def create_basic_doc_term_matrix(df):
+    #create doc term feature matrix
 
     df['Ingredients'] = df.apply(lambda row: ' '.join(clean_strings(row['Ingredients'])), axis=1)
+    #join list of words in to a long string
 
     vec = CountVectorizer(stop_words=None)
     X = vec.fit_transform(df['Ingredients'])
+    #vectorize
 
     df_features = pd.DataFrame(X.toarray(), columns = vec.get_feature_names())
+    #get feature names
 
     return df_features
 
@@ -67,21 +72,27 @@ def create_tf_idf(df):
     idf_df = pd.DataFrame(X.toarray().transpose(), index = tf.get_feature_names())
     print(idf_df.transpose())
 
-#create_tf_idf(df)
 
 def process_data(df, max_gram):
+    #create train, test split for tfidf
+
     df['Ingredients'] = df.apply(lambda row: ' '.join(clean_strings(row['Ingredients'])), axis=1)
+    #join ingredients
 
     X_train_lem, X_test_lem, y_train_lem, y_test_lem = train_test_split(df['Ingredients'], df['Cuisine'], test_size=0.20, random_state=1)
+    #train test split
 
     tfidf=TfidfVectorizer(ngram_range=(1, max_gram))
+    #instantiate tfidf
 
     tfidf_X_train_lem = tfidf.fit_transform(X_train_lem)
     tfidf_X_test_lem = tfidf.transform(X_test_lem)
+    #transform your X
 
     return tfidf_X_train_lem, tfidf_X_test_lem, y_train_lem, y_test_lem
 
 def filter_cuisines(df, cuisines_to_filter):
+    #simple filter function
 
     df = df[df['Cuisine'].isin(cuisines_to_filter)]
 

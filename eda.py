@@ -20,11 +20,14 @@ pd.set_option('display.max_columns', None)
 
 
 def freq_by_cuisine():
+    #create word frequency line plots for each cuisine in the database
 
     df = pd.read_csv('concat_uncleaned_recipes.csv').dropna()
+    #read in the file and drop out the nans
 
 
     df['Ingredients'] = df.apply(lambda row: ' '.join(pre_processing.clean_strings(row['Ingredients'])), axis=1)
+    #create ingredients list for each recipe
     df_freq_mex = df[df['Cuisine']==2]
     df_freq_ital = df[df['Cuisine']==3]
     df_freq_fren = df[df['Cuisine']==5]
@@ -38,9 +41,8 @@ def freq_by_cuisine():
 
 
     for cuisine in df_list:
-        #print(item.head)
+        #go through each cuisine and plot their word frequency for the top 20 terms
         data = cuisine['Ingredients'].apply(lambda row: list(everygrams(row.split(' '),min_len = 2, max_len = 2)))
-        #data = cuisine['Ingredients'].apply(lambda row: row.split(' '))
         flat_data = [item for sublist in data for item in sublist]
         fdist = FreqDist(flat_data)
 
@@ -48,12 +50,10 @@ def freq_by_cuisine():
         word_distro_plot(fdist)
 
 def box_whisk_by_cuisine():
+    #create a box and whisker of word count for each cuisine
     df = pre_processing.create_base_df()
 
-    #df['Ingredients'] = df.apply(lambda row: ' '.join(pre_processing.clean_strings(row['Ingredients'])), axis=1)
     df['Ingredients'] = df.apply(lambda row: pre_processing.clean_strings(row['Ingredients']), axis=1)
-    #df['word_count'] = len(df.Ingredients)
-
     df['word_count'] = df.Ingredients.str.len()
 
     fig = plt.figure()
@@ -66,6 +66,7 @@ def box_whisk_by_cuisine():
 
 
 def word_distro_plot(fdist):
+    #takes in a word frequency distrobution and plot it
     fig = plt.figure()
     plt.style.use('seaborn')
     sns.set_palette('colorblind')
@@ -73,6 +74,7 @@ def word_distro_plot(fdist):
     plt.show()
 
 def count_plot():
+    #a count plot to show the class distrobution within the dataset
     df = pre_processing.create_base_df()
     df['Ingredients'] = df.apply(lambda row: pre_processing.clean_strings(row['Ingredients']), axis=1)
     fig = plt.figure()
@@ -85,9 +87,5 @@ def count_plot():
     plt.show()
 
 #box_whisk_by_cuisine()
-
-
-count_plot()
-
-
+#count_plot()
 #freq_by_cuisine()

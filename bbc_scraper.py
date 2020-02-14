@@ -6,12 +6,11 @@ import pandas as pd
 def get_cuisine_type_links():
     #get a page link for each cuisine classification on bbc.com
     page = requests.get("https://www.bbc.co.uk/food/cuisines")
-    #automaticall goes to the BBC cuisine homepage
+    #automatically goes to the BBC cuisine homepage
     soup = BeautifulSoup(page.content, 'html.parser')
 
     list = soup.find_all(class_="promo promo__cuisine")
     link_list = []
-
     for item in list:
         cuisine = item['href'].replace('/food/cuisines/','')
         link  = 'https://www.bbc.co.uk' + item['href'] + '/a-z'
@@ -25,14 +24,11 @@ def get_alphabet_links(cuisine_link):
     #gets a link for each cooresponding alphabetized page from a given cuisines link
 
     link_list = []
-
     page = requests.get(cuisine_link)
     soup = BeautifulSoup(page.content, 'html.parser')
-
     test = soup.find_all(class_="tab-bar__tab gel-pica")
 
     if test:
-
         list = soup.find_all(class_="az-keyboard__link gel-pica-bold")
         link_list.append(cuisine_link)
 
@@ -45,12 +41,9 @@ def get_alphabet_links(cuisine_link):
 def get_recipe_page_links(alphabet_link):
     #get all recipe links on a given alpabetized page
 
-
     link_list = []
-
     page = requests.get(alphabet_link)
     soup = BeautifulSoup(page.content, 'html.parser')
-
     list = soup.find_all(class_="gel-layout__item gel-1/2 gel-1/3@m gel-1/4@xl")
 
     for item in list:
@@ -66,7 +59,6 @@ def get_ingredients(recipe_link):
     page = requests.get(recipe_link)
     soup = BeautifulSoup(page.content, 'html.parser')
     list = soup.find_all(class_="recipe-ingredients__list-item")
-
     ingredients = ''
 
     for item in list:
@@ -108,7 +100,6 @@ def bbc_scrape_wrapper():
             recipe_links = get_recipe_page_links(alphabet_link)
 
             for recipe_link in recipe_links:
-
                 ingredients = get_ingredients(recipe_link)
                 final_list.append((ingredients, cuisine_type))
                 #print(final_list)

@@ -18,15 +18,20 @@ import pre_processing
 def fit_random_forest(df, max_gram):
 
     tfidf_X_train_lem, tfidf_X_test_lem, y_train_lem, y_test_lem = pre_processing.process_data(df, max_gram)
+    #great tfidf train test split
 
     rf_classifier_lem = RandomForestClassifier(n_estimators=100, random_state=0)
+    #instantiate random forest
 
     rf_classifier_lem.fit(tfidf_X_train_lem, y_train_lem)
+    #fit that forest
 
     rf_test_preds_lem = rf_classifier_lem.predict(tfidf_X_test_lem)
+    #create predictions
 
     rf_acc_score_lem = accuracy_score(y_test_lem, rf_test_preds_lem)
     rf_f1_score_lem = f1_score(y_test_lem, rf_test_preds_lem, average='macro')
+    #get accuracy and F1
 
     class_rep = classification_report(y_test_lem, rf_test_preds_lem)
 
@@ -38,6 +43,7 @@ def fit_random_forest(df, max_gram):
 
 
 def refine_forest_model():
+    #run random forest on different refinements
     df = pd.read_csv('concat_uncleaned_recipes.csv')
     df = df.dropna()
 
@@ -54,7 +60,4 @@ def refine_forest_model():
     #remove french cuisine type
 
 
-    #try 2-grams
-
-
-refine_forest_model()
+#refine_forest_model()

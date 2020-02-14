@@ -2,7 +2,7 @@
 import pandas as pd
 
 def create_overall_dataframe():
-    #takes in each individual cuisine
+    #takes in each individual bbc cuisine csv and concats them into one overall dataframe
 
     amer = pd.read_csv('cuisine_csv/amer.csv' )
     british = pd.read_csv('cuisine_csv/british.csv' )
@@ -24,12 +24,10 @@ def create_overall_dataframe():
     cuisine_map = {'american': 6, 'british' : 7, 'chinese' : 8, 'french' : 5, 'indian' : 9, 'irish' : 10, 'italian' : 3,
                 'japanese' : 13, 'mexican' : 2, 'nordic' : 11, 'north_african' : 4, 'pakistani' : 12}
 
-    #print(overall_df.head)
 
     overall_df['type'] = overall_df['type'].replace(cuisine_map)
 
-    #print(overall_df.head)
 
     overall_df.to_csv('overall_bbc.csv', index=False)
 
-create_overall_dataframe()
+#create_overall_dataframe()
