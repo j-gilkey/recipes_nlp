@@ -1,8 +1,8 @@
 # recipes_nlp
 
-![header](vis/Italy_Wordcloud.png)
+![Italy](/vis/Italy_Wordcloud.png)
 
-![header](vis/India_Wordcloud.png)
+![India](/vis/India_Wordcloud.png)
 
 
 Initial goal of this project was to use Natural Language Processing in order to classify food recipes by cuisine type. However, we have done a little more than that. 
@@ -13,9 +13,9 @@ We started our project by scraping two popular websites, BBC Food and Allrecipes
 
 # EDA and Initial modeling
 
-![header](vis/recipe_count_cuisine.png)
+![Count](/vis/recipe_count_cuisine.png)
 
-![header](vis/Scatterplot)
+![Scatterplot](/vis/Scatterplot)
 
 Our EDA showed that there is some class imbalance in the dataset, for instance, there were significantly fewer Nordic and Pakistani recipes compared to the rest of the groups. Also, dimensionality reduction and creating a scatter plot showed us that American cuisine imitates all others too much, which may confuse our model. We thought that running our model with those classes and then without them will result in improvement in both accuracy and recall.
 
